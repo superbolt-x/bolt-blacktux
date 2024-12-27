@@ -25,5 +25,6 @@ impressions,
 link_clicks,
 add_to_cart,
 purchases,
-revenue
+revenue,
+complete_registration
 FROM {{ ref('facebook_performance_by_ad') }}
