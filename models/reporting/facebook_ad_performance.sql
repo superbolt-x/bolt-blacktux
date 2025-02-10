@@ -30,8 +30,9 @@ link_clicks,
 add_to_cart,
 purchases,
 revenue,
+ins.complete_registration as "complete_registration_7dc_1dv",
 act.complete_registration
-FROM {{ ref('facebook_performance_by_ad') }}
+FROM {{ ref('facebook_performance_by_ad') }} ins
 LEFT JOIN 
     (SELECT DATE_TRUNC('day',date) as date, 'day' as date_granularity, ad_id,
         COALESCE(SUM("_7_d_click"),0) as complete_registration
