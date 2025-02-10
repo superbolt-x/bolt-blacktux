@@ -7,6 +7,10 @@ campaign_name,
 campaign_id,
 campaign_effective_status,
 campaign_type_default,
+case 
+    when campaign_id = '6633504449611' and date_granularity = 'day' and date between '2024-12-27' and '2025-01-08' then 'Pre-Segmentation'
+    when campaign_id = '6633504449611' and date_granularity = 'day' and date between '2025-01-08' and '2025-02-03' then 'Post-Segmentation'
+else 'Other' end as period,
 adset_name,
 adset_id,
 adset_effective_status,
