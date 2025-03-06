@@ -7,3 +7,5 @@ sources:
   tables:
     - name: ads_insights_actions
       identifier: ads_insights_actions
+    - name: campaigns_insights_actions
+      identifier: campaigns_insights_actions
