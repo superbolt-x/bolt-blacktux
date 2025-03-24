@@ -20,45 +20,66 @@ add_to_cart,
 purchases,
 revenue,
 ins."offsite_conversion.fb_pixel_custom.shopifycompleteweddingpartyleadform" as "shopify_lead_7dc_1dv",
-act."shopify_lead",
+conv."shopify_lead",
 ins."offsite_conversion.fb_pixel_custom.shopifycreatorcheckout" as "shopify_checkout_7dc_1dv",
-act."shopify_checkout",
+conv."shopify_checkout",
 ins.complete_registration as "complete_registration_7dc_1dv",
 act.complete_registration
 FROM {{ ref('facebook_performance_by_campaign') }} ins
 LEFT JOIN 
     (SELECT DATE_TRUNC('day',date) as date, 'day' as date_granularity, campaign_id,
-        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration
     FROM {{ source('facebook_raw','campaigns_insights_actions') }}
     GROUP BY 1,2,3
     UNION ALL
     SELECT DATE_TRUNC('week',date) as date, 'week' as date_granularity, campaign_id,
-        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration
     FROM {{ source('facebook_raw','campaigns_insights_actions') }}
     GROUP BY 1,2,3
     UNION ALL
     SELECT DATE_TRUNC('month',date) as date, 'month' as date_granularity, campaign_id,
-        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration
     FROM {{ source('facebook_raw','campaigns_insights_actions') }}
     GROUP BY 1,2,3
     UNION ALL
     SELECT DATE_TRUNC('quarter',date) as date, 'quarter' as date_granularity, campaign_id,
-        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration
     FROM {{ source('facebook_raw','campaigns_insights_actions') }}
     GROUP BY 1,2,3
     UNION ALL
     SELECT DATE_TRUNC('year',date) as date, 'year' as date_granularity, campaign_id,
-        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
-        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+        COALESCE(SUM(CASE WHEN action_type = 'complete_registration' THEN "_7_d_click" ELSE 0 END),0) as complete_registration
     FROM {{ source('facebook_raw','campaigns_insights_actions') }}
     GROUP BY 1,2,3) act
+USING(campaign_id,date,date_granularity)
+LEFT JOIN 
+    (SELECT DATE_TRUNC('day',date) as date, 'day' as date_granularity, campaign_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+    FROM {{ source('facebook_raw','campaigns_insights_conversions') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('week',date) as date, 'week' as date_granularity, campaign_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+    FROM {{ source('facebook_raw','campaigns_insights_conversions') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('month',date) as date, 'month' as date_granularity, campaign_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+    FROM {{ source('facebook_raw','campaigns_insights_conversions') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('quarter',date) as date, 'quarter' as date_granularity, campaign_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+    FROM {{ source('facebook_raw','campaigns_insights_conversions') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('year',date) as date, 'year' as date_granularity, campaign_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycompleteweddingpartyleadform' THEN "_7_d_click" ELSE 0 END),0) as shopify_lead,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
+    FROM {{ source('facebook_raw','campaigns_insights_conversions') }}
+    GROUP BY 1,2,3) conv
 USING(campaign_id,date,date_granularity)
