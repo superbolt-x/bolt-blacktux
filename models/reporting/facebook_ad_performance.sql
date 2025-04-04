@@ -35,7 +35,9 @@ revenue as "revenue_7dc_1dv",
 ins."offsite_conversion.fb_pixel_custom.shopifycompleteweddingpartyleadform" as "shopify_lead_7dc_1dv",
 conv."shopify_lead",
 ins."offsite_conversion.fb_pixel_custom.shopifycreatorcheckout" as "shopify_checkout_7dc_1dv",
+ins."offsite_conversion.fb_pixel_custom.shopifycreatorcheckout_value" as "shopify_checkout_value_7dc_1dv",
 conv."shopify_checkout",
+conv_val."shopify_checkout_value",
 ins.complete_registration as "complete_registration_7dc_1dv",
 act.complete_registration
 FROM {{ ref('facebook_performance_by_ad') }} ins
@@ -95,4 +97,30 @@ LEFT JOIN
         COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout
     FROM {{ source('facebook_raw','ads_insights_conversions') }}
     GROUP BY 1,2,3) conv
+USING(ad_id,date,date_granularity)
+LEFT JOIN 
+    (SELECT DATE_TRUNC('day',date) as date, 'day' as date_granularity, ad_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout_value
+    FROM {{ source('facebook_raw','ads_insights_conversion_values') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('week',date) as date, 'week' as date_granularity, ad_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout_value
+    FROM {{ source('facebook_raw','ads_insights_conversion_values') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('month',date) as date, 'month' as date_granularity, ad_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout_value
+    FROM {{ source('facebook_raw','ads_insights_conversion_values') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('quarter',date) as date, 'quarter' as date_granularity, ad_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout_value
+    FROM {{ source('facebook_raw','ads_insights_conversion_values') }}
+    GROUP BY 1,2,3
+    UNION ALL
+    SELECT DATE_TRUNC('year',date) as date, 'year' as date_granularity, ad_id,
+        COALESCE(SUM(CASE WHEN action_type ~* 'shopifycreatorcheckout' THEN "_7_d_click" ELSE 0 END),0) as shopify_checkout_value
+    FROM {{ source('facebook_raw','ads_insights_conversion_values') }}
+    GROUP BY 1,2,3) conv_val
 USING(ad_id,date,date_granularity)
