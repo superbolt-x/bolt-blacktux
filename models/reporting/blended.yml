@@ -11,5 +11,7 @@ sources:
       identifier: campaigns_insights_actions
     - name: ads_insights_conversions
       identifier: ads_insights_conversions
+    - name: ads_insights_conversion_values
+      identifier: ads_insights_conversion_values
     - name: campaigns_insights_conversions
       identifier: campaigns_insights_conversions
